@@ -1,13 +1,7 @@
+from PyQt5.QtWidgets import QApplication
+from go import Go
 import sys
 
-from PyQt5.QtWidgets import QApplication, QWidget
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    # Create a Qt widget, which will be our window.
-    window = QWidget()
-    window.show()
-
-    # Start the event loop.
-    app.exec()
+app = QApplication([])
+myGo = Go()
+sys.exit(app.exec_())
