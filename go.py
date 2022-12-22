@@ -1,8 +1,10 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QPushButton, QWidget
 
 from board import Board
 from constants import Constants
-from stone import Stone
+from dockWidget import DockWidget
+from gameManager import GameManager
 
 
 class Go(QMainWindow):
@@ -12,7 +14,14 @@ class Go(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        self.board = Board()
+        self.game_manager = GameManager(7)
+        self.board = Board(self.game_manager)
+        self.game_manager.addUpdateUICallback(self.board.update)
+
+        self.dock_widget = DockWidget(self.game_manager)
+
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
+
         self.central_widget = QWidget()
         self.central_layout = QVBoxLayout()
         self.setCentralWidget(self.central_widget)
