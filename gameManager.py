@@ -13,12 +13,52 @@ class GameManager():
 
     def __init__(self, board_size):
         self.board_size = board_size
-        self.board_array = np.zeros((self.board_size, self.board_size))
-        print(self.board_array)
+        self.board_array = np.zeros((board_size, board_size))
+        self.player_one_move = True
 
     def addUpdateUICallback(self, updateUiMethod):
         updateUiMethod()
 
     def cellPressed(self, x, y):
-        self.board_array[x][y] = random.randint(1, 2)
-        print(self.board_array)
+        if not self.isAlreadyStonePlaced(x, y):
+            self.board_array[x][y] = 1 if self.player_one_move else 2
+            self.player_one_move = not self.player_one_move
+
+        #Захватывает только если 1 камень окружен если их несколько то иди ты нахуй http://www.allaboutgo.com/play-go-9.html потестить как работает можно тут
+        self.remove_surrounded_groups(self.board_array)
+
+    def isAlreadyStonePlaced(self, x, y):
+        return self.board_array[x][y] != 0
+
+    def remove_surrounded_stones(self, board, x, y):
+        # check if the position is out of bounds or not occupied by a stone
+        if x < 0 or y < 0 or x >= len(board) or y >= len(board[0]) or board[x][y] == 0:
+            return False
+
+        # check if the stone is surrounded on all sides
+        if (x > 0 and board[x - 1][y] != board[x][y] and board[x - 1][y] != 0) and (x < len(board) - 1 and board[x + 1][y] != board[x][y] and board[x + 1][y] != 0) and (y > 0 and board[x][y - 1] != board[x][y] and board[x][y - 1] != 0) and (y < len(board[0]) - 1 and board[x][y + 1] != board[x][y] and board[x][y + 1] != 0):
+            # remove the stone
+            board[x][y] = 0
+            return True
+
+        else:
+            return False
+
+
+    def remove_surrounded_groups(self, board):
+        # print(1)
+        # keep track of whether any stones were removed
+        removed = False
+
+        # check each stone on the board
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if self.remove_surrounded_stones(board, i, j):
+                    print(2)
+                    removed = True
+
+        # if any stones were removed, check for more surrounded groups
+        if removed:
+            self.remove_surrounded_groups(board)
+
+
