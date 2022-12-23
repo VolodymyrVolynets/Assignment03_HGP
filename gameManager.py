@@ -15,10 +15,35 @@ class GameManager():
         self.board_size = board_size
         self.board_array = np.zeros((self.board_size, self.board_size))
         print(self.board_array)
+        self.white_turn = False
 
     def addUpdateUICallback(self, updateUiMethod):
         updateUiMethod()
 
     def cellPressed(self, x, y):
-        self.board_array[x][y] = random.randint(1, 2)
+        self.board_array[y][x] = 1 if self.white_turn else 2
         print(self.board_array)
+
+        liberties = np.zeros((self.board_size, self.board_size))
+        for i in range(0, self.board_size):
+            for j in range(0, self.board_size):
+                if not j-1 < 0:
+                    if not self.board_array[i][j] == 0:
+                        if self.board_array[i][j-1] == 0 or self.board_array[i][j-1] == self.board_array[i][j]:
+                            liberties[i][j] += 1
+                if not j+1 >= self.board_size:
+                    if not self.board_array[i][j] == 0:
+                        if self.board_array[i][j+1] == 0 or self.board_array[i][j+1] == self.board_array[i][j]:
+                            liberties[i][j] += 1
+                if not i-1 < 0:
+                    if not self.board_array[i][j] == 0:
+                        if self.board_array[i-1][j] == 0 or self.board_array[i-1][j] == self.board_array[i][j]:
+                            liberties[i][j] += 1
+                if not i+1 >= self.board_size:
+                    if not self.board_array[i][j] == 0:
+                        if self.board_array[i+1][j] == 0 or self.board_array[i+1][j] == self.board_array[i][j]:
+                            liberties[i][j] += 1
+
+        print(liberties)
+
+        self.white_turn = not self.white_turn
