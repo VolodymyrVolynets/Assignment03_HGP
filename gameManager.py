@@ -14,28 +14,34 @@ class GameManager():
     def __init__(self, board_size):
         self.board_size = board_size
         self.board_array = np.zeros((self.board_size, self.board_size))
+        self.prev_liberties = np.ones((self.board_size, self.board_size))
         print(self.board_array)
         self.white_turn = False
         self.board_array = np.zeros((board_size, board_size))
-        self.player_one_move = True
+
+        self.black_score = 0
+        self.white_score = 0
 
     def addUpdateUICallback(self, updateUiMethod):
         updateUiMethod()
 
     def cellPressed(self, x, y):
+
+        # check if the stone is already placed
         if self.board_array[y][x] == 0:
             self.board_array[y][x] = 1 if self.white_turn else 2
         else:
             return
-        
+
         print(self.board_array)
 
+        # get the liberties of each stone
         liberties = np.zeros((self.board_size, self.board_size))
-        chains = []
         for i in range(0, self.board_size):
             for j in range(0, self.board_size):
                 liberties[i][j] = self.getLiberties(i, j)
 
+        # chains = []
         # print(chains)
         #
         # for chain in chains:
@@ -64,31 +70,20 @@ class GameManager():
                 if liberties[i][j] == 0:
                     self.board_array[i][j] = 0
 
+        # update score
+        for i in range(0, self.board_size):
+            for j in range(0, self.board_size):
+                if not liberties[i][j] == self.prev_liberties[i][j] and liberties[i][j] == 0:
+                    if self.white_turn:
+                        self.white_score += 1
+                    else:
+                        self.black_score += 1
+
+        print(f"Black player score: {self.black_score}")
+        print(f"White player score: {self.white_score}")
+
+        self.prev_liberties = liberties
         self.white_turn = not self.white_turn
-        # if not self.isAlreadyStonePlaced(x, y):
-        #     self.board_array[x][y] = 1 if self.player_one_move else 2
-        #     self.player_one_move = not self.player_one_move
-
-        #Захватывает только если 1 камень окружен если их несколько то иди ты нахуй http://www.allaboutgo.com/play-go-9.html потестить как работает можно тут
-        # self.remove_surrounded_groups(self.board_array)
-
-    def isAlreadyStonePlaced(self, x, y):
-        return self.board_array[x][y] != 0
-
-    def remove_surrounded_stones(self, board, x, y):
-        # check if the position is out of bounds or not occupied by a stone
-        if x < 0 or y < 0 or x >= len(board) or y >= len(board[0]) or board[x][y] == 0:
-            return False
-
-        # check if the stone is surrounded on all sides
-        if (x > 0 and board[x - 1][y] != board[x][y] and board[x - 1][y] != 0) and (x < len(board) - 1 and board[x + 1][y] != board[x][y] and board[x + 1][y] != 0) and (y > 0 and board[x][y - 1] != board[x][y] and board[x][y - 1] != 0) and (y < len(board[0]) - 1 and board[x][y + 1] != board[x][y] and board[x][y + 1] != 0):
-            # remove the stone
-            board[x][y] = 0
-            return True
-
-        else:
-            return False
-
 
     def getLiberties(self, i, j):
         count = 0
@@ -100,7 +95,6 @@ class GameManager():
                 elif self.board_array[i][j - 1] == self.board_array[i][j]:
                     self.board_array[i][j] = 100
                     count += self.getLiberties(i, j-1)
-                    pass
         if not j + 1 >= self.board_size:
             # if not self.board_array[i][j] == 0:
                 if self.board_array[i][j + 1] == 0:
@@ -126,19 +120,5 @@ class GameManager():
         self.board_array[i][j] = temp
         return count
 
-
-    def remove_surrounded_groups(self, board):
-        # print(1)
-        # keep track of whether any stones were removed
-        removed = False
-
-        # check each stone on the board
-        for i in range(len(board)):
-            for j in range(len(board[0])):
-                if self.remove_surrounded_stones(board, i, j):
-                    print(2)
-                    removed = True
-
-        # if any stones were removed, check for more surrounded groups
-        if removed:
-            self.remove_surrounded_groups(board)
+    def passTurn(self):
+        self.white_turn = not self.white_turn
