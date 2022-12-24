@@ -23,7 +23,11 @@ class GameManager():
         updateUiMethod()
 
     def cellPressed(self, x, y):
-        self.board_array[y][x] = 1 if self.white_turn else 2
+        if self.board_array[y][x] == 0:
+            self.board_array[y][x] = 1 if self.white_turn else 2
+        else:
+            return
+        
         print(self.board_array)
 
         liberties = np.zeros((self.board_size, self.board_size))
