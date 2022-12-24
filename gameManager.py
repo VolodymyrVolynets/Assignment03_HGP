@@ -13,6 +13,9 @@ class GameManager():
 
     def __init__(self, board_size):
         self.board_size = board_size
+        self.board_array = np.zeros((self.board_size, self.board_size))
+        print(self.board_array)
+        self.white_turn = False
         self.board_array = np.zeros((board_size, board_size))
         self.player_one_move = True
 
@@ -20,12 +23,50 @@ class GameManager():
         updateUiMethod()
 
     def cellPressed(self, x, y):
-        if not self.isAlreadyStonePlaced(x, y):
-            self.board_array[x][y] = 1 if self.player_one_move else 2
-            self.player_one_move = not self.player_one_move
+        self.board_array[y][x] = 1 if self.white_turn else 2
+        print(self.board_array)
+
+        liberties = np.zeros((self.board_size, self.board_size))
+        chains = []
+        for i in range(0, self.board_size):
+            for j in range(0, self.board_size):
+                liberties[i][j] = self.getLiberties(i, j)
+
+        # print(chains)
+        #
+        # for chain in chains:
+        #     i = chain[0]
+        #     j = chain[1]
+        #     count = 0
+        #     if not j - 1 < 0:
+        #         if not self.board_array[i][j-1] == 0 and not self.board_array[i][j-1] == self.board_array[i][j]:
+        #             count += 1
+        #     if not j + 1 >= self.board_size:
+        #         if not self.board_array[i][j+1] == 0 and not self.board_array[i][j+1] == self.board_array[i][j]:
+        #             count += 1
+        #     if not i - 1 < 0:
+        #         if not self.board_array[i-1][j] == 0 and not self.board_array[i-1][j] == self.board_array[i][j]:
+        #             count += 1
+        #     if not i + 1 >= self.board_size:
+        #         if not self.board_array[i+1][j] == 0 and not self.board_array[i+1][j] == self.board_array[i][j]:
+        #             count += 1
+        #
+        #     if count == 4:
+        #         liberties[i][j] = 0
+
+        print(liberties)
+        for i in range(0, self.board_size):
+            for j in range(0, self.board_size):
+                if liberties[i][j] == 0:
+                    self.board_array[i][j] = 0
+
+        self.white_turn = not self.white_turn
+        # if not self.isAlreadyStonePlaced(x, y):
+        #     self.board_array[x][y] = 1 if self.player_one_move else 2
+        #     self.player_one_move = not self.player_one_move
 
         #Захватывает только если 1 камень окружен если их несколько то иди ты нахуй http://www.allaboutgo.com/play-go-9.html потестить как работает можно тут
-        self.remove_surrounded_groups(self.board_array)
+        # self.remove_surrounded_groups(self.board_array)
 
     def isAlreadyStonePlaced(self, x, y):
         return self.board_array[x][y] != 0
@@ -45,6 +86,38 @@ class GameManager():
             return False
 
 
+    def getLiberties(self, i, j):
+        count = 0
+        if not j - 1 < 0:
+            if not self.board_array[i][j] == 0:
+                if self.board_array[i][j - 1] == 0:
+                    count += 1
+                elif self.board_array[i][j - 1] == self.board_array[i][j]:
+                    count += self.getLiberties(i, j-1)
+                    pass
+        if not j + 1 >= self.board_size:
+            if not self.board_array[i][j] == 0:
+                if self.board_array[i][j + 1] == 0:
+                    count += 1
+                elif self.board_array[i][j + 1] == self.board_array[i][j]:
+                    count += self.getLiberties(i, j+1)
+        if not i - 1 < 0:
+            if not self.board_array[i][j] == 0:
+                if self.board_array[i - 1][j] == 0:
+                    count += 1
+                elif self.board_array[i - 1][j] == self.board_array[i][j]:
+                    pass
+                    count += self.getLiberties(i-1, j)
+        if not i + 1 >= self.board_size:
+            if not self.board_array[i][j] == 0:
+                if self.board_array[i + 1][j] == 0:
+                    count += 1
+                elif self.board_array[i + 1][j] == self.board_array[i][j]:
+                    count += self.getLiberties(i+1, j)
+
+        return count
+
+
     def remove_surrounded_groups(self, board):
         # print(1)
         # keep track of whether any stones were removed
@@ -60,5 +133,3 @@ class GameManager():
         # if any stones were removed, check for more surrounded groups
         if removed:
             self.remove_surrounded_groups(board)
-
-

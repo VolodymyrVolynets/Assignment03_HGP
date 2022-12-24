@@ -65,10 +65,10 @@ class Board(QFrame):
             for j in range(self.game_manager.board_size):
                 if self.game_manager.board_array[i][j] != 0:
                     if self.game_manager.board_array[i][j] == 1:
-                        qp.setBrush(QColor("red"))
-                    elif self.game_manager.board_array[i][j] == 2:
                         qp.setBrush(QColor("white"))
-                    qp.drawEllipse(self.intersection[i][j][0] - int(self.getCellSize() / 4), self.intersection[i][j][1] - int(self.getCellSize() / 4), int(self.getCellSize() / 2), int(self.getCellSize() / 2))
+                    elif self.game_manager.board_array[i][j] == 2:
+                        qp.setBrush(QColor("red"))
+                    qp.drawEllipse(self.intersection[i][j][1] - int(self.getCellSize() / 4), self.intersection[i][j][0] - int(self.getCellSize() / 4), int(self.getCellSize() / 2), int(self.getCellSize() / 2))
 
     def drawBoard(self, qp: QPainter):
         qp.setPen(QColor("white"))
