@@ -88,33 +88,38 @@ class GameManager():
 
     def getLiberties(self, i, j):
         count = 0
+        temp = self.board_array[i][j]
         if not j - 1 < 0:
-            if not self.board_array[i][j] == 0:
+            # if not self.board_array[i][j] == 0:
                 if self.board_array[i][j - 1] == 0:
                     count += 1
                 elif self.board_array[i][j - 1] == self.board_array[i][j]:
+                    self.board_array[i][j] = 100
                     count += self.getLiberties(i, j-1)
                     pass
         if not j + 1 >= self.board_size:
-            if not self.board_array[i][j] == 0:
+            # if not self.board_array[i][j] == 0:
                 if self.board_array[i][j + 1] == 0:
                     count += 1
                 elif self.board_array[i][j + 1] == self.board_array[i][j]:
+                    self.board_array[i][j] = 101
                     count += self.getLiberties(i, j+1)
         if not i - 1 < 0:
-            if not self.board_array[i][j] == 0:
+            # if not self.board_array[i][j] == 0:
                 if self.board_array[i - 1][j] == 0:
                     count += 1
                 elif self.board_array[i - 1][j] == self.board_array[i][j]:
-                    pass
+                    self.board_array[i][j] = 102
                     count += self.getLiberties(i-1, j)
         if not i + 1 >= self.board_size:
-            if not self.board_array[i][j] == 0:
+            # if not self.board_array[i][j] == 0:
                 if self.board_array[i + 1][j] == 0:
                     count += 1
                 elif self.board_array[i + 1][j] == self.board_array[i][j]:
+                    self.board_array[i][j] = 103
                     count += self.getLiberties(i+1, j)
 
+        self.board_array[i][j] = temp
         return count
 
 
