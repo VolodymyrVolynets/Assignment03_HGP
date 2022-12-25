@@ -26,9 +26,9 @@ class GameManager():
         self.black_player_stones_eaten = 0
         self.white_score = 0
         self.white_player_stones_eaten = 0
-
+        self.update_dock_widget_ui = None
     def addUpdateUICallback(self, updateUiMethod):
-        updateUiMethod()
+        self.update_dock_widget_ui = updateUiMethod
 
 
     def cellPressed(self, x, y):
@@ -76,19 +76,18 @@ class GameManager():
         #         liberties[i][j] = 0
 
         print(liberties)
-        white_player_stones_eaten = 0
-        black_player_stones_eaten = 0
         for i in range(0, self.board_size):
             for j in range(0, self.board_size):
                 if liberties[i][j] == 0:
                     if not self.board_array[i][j] == 0:
                         if self.white_turn:
-                            white_player_stones_eaten += 1
+                            self.white_player_stones_eaten += 1
                         else:
-                            black_player_stones_eaten += 1
+                            self.black_player_stones_eaten += 1
                     self.board_array[i][j] = 0
-        print(white_player_stones_eaten)
-        print(black_player_stones_eaten)
+        print(self.white_player_stones_eaten)
+        print(self.black_player_stones_eaten)
+        self.update_dock_widget_ui()
 
         # update score
         for i in range(0, self.board_size):
@@ -99,10 +98,11 @@ class GameManager():
                     else:
                         self.black_score += 1
 
-        self.white_score += white_player_stones_eaten
-        self.black_score += black_player_stones_eaten
+        self.white_score += self.white_player_stones_eaten
+        self.black_score += self.black_player_stones_eaten
         print(f"Black player score: {self.black_score}")
         print(f"White player score: {self.white_score}")
+        self.update_dock_widget_ui()
 
 
         self.prev_liberties = liberties
@@ -148,5 +148,6 @@ class GameManager():
 
     def passTurn(self):
         self.white_turn = not self.white_turn
+        self.update_dock_widget_ui()
 
 

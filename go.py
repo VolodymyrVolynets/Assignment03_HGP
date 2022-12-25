@@ -17,8 +17,8 @@ class Go(QMainWindow):
         self.game_manager = GameManager(7)
         self.board = Board(self.game_manager)
 
-        self.dock_widget = DockWidget(self.game_manager,self.board)
-        # self.game_manager.addUpdateUICallback(self.dock_widget.update)
+        self.dock_widget = DockWidget(self.game_manager)
+        self.game_manager.addUpdateUICallback(self.dock_widget.initUI)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
 
         self.central_widget = QWidget()
