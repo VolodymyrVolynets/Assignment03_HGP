@@ -98,11 +98,6 @@ class GameManager():
                         self.white_score += 1
                     else:
                         self.black_score += 1
-                if not liberties[i][j] == self.prev_liberties[i][j] and self.prev_liberties[i][j] == 0:
-                    if self.white_turn:
-                        self.black_score -= 1
-                    else:
-                        self.white_score -= 1
 
         self.white_score += white_player_stones_eaten
         self.black_score += black_player_stones_eaten
