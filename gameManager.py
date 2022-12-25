@@ -19,6 +19,7 @@ class GameManager():
         self.board_array = np.zeros((self.board_size, self.board_size))
         self.prev_liberties = np.ones((self.board_size, self.board_size))
         print(self.board_array)
+        self.buttonCount = 0
         self.white_turn = False
         self.board_array = np.zeros((board_size, board_size))
 
@@ -102,6 +103,9 @@ class GameManager():
         self.black_score += self.black_player_stones_eaten
         print(f"Black player score: {self.black_score}")
         print(f"White player score: {self.white_score}")
+        if(self.buttonCount>0):
+            self.buttonCount-=1
+        print(self.buttonCount)
         self.update_dock_widget_ui()
 
 
@@ -148,6 +152,8 @@ class GameManager():
 
     def passTurn(self):
         self.white_turn = not self.white_turn
+        self.buttonCount+=1
+        print(self.buttonCount)
         self.update_dock_widget_ui()
 
 

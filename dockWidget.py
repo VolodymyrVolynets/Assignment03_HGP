@@ -30,6 +30,7 @@ class DockWidget(QDockWidget):
 
     def initUI(self):
         '''initiates ScoreBoard UI'''
+
         self.resize(200, 400)
         self.setFixedWidth(200)
         self.setFixedSize(200,400)
@@ -56,8 +57,10 @@ class DockWidget(QDockWidget):
 
     def updateTurn(self):
         self.bolTurn = self.game_manager.white_turn
-        if self.bolTurn:
+        print(self.bolTurn)
+        if not self.bolTurn:
             self.turnLabel.setText("WHITE PLAYER TURN")
+
         else:
             self.turnLabel.setText("BLACK PLAYER TURN")
 
@@ -66,8 +69,11 @@ class DockWidget(QDockWidget):
         self.blackScoreLabel.setText(str(self.black_score))
 
     def updateSkipTurn(self):
-        self.updateTurn()
         self.game_manager.passTurn()
+        self.updateTurn()
+        if(self.game_manager.buttonCount>=2):
+            self.skipButton.close()
+            print("2 times skiped")
         # QApplication.processEvents()
     def updateWhiteScore(self):
         self.whiteScoreLabel.setText(str(self.game_manager.white_score))

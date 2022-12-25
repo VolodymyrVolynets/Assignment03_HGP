@@ -17,7 +17,9 @@ class Board(QFrame):
 
     def initUI(self):
         self.setFixedSize(Constants.BOARD_SIZE)
-        self.setStyleSheet("background-color:black;");
+        imagePath=".//woodTable.jpg"
+        # self.setStyleSheet("background-color:black;");
+        self.setStyleSheet("QFrame { background-image: url(" + imagePath + "); }")
         self.board_size = 7
         print(self.getCellSize())
         self.intersection = [[]]
@@ -67,7 +69,7 @@ class Board(QFrame):
                     if self.game_manager.board_array[i][j] == 1:
                         qp.setBrush(QColor("white"))
                     elif self.game_manager.board_array[i][j] == 2:
-                        qp.setBrush(QColor("red"))
+                        qp.setBrush(QColor("black"))
                     qp.drawEllipse(self.intersection[i][j][1] - int(self.getCellSize() / 4), self.intersection[i][j][0] - int(self.getCellSize() / 4), int(self.getCellSize() / 2), int(self.getCellSize() / 2))
 
     def drawBoard(self, qp: QPainter):
