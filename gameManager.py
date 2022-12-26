@@ -25,8 +25,10 @@ class GameManager():
 
         self.black_score = 0
         self.black_player_stones_eaten = 0
+        self.territory_controlled_by_black = 0
         self.white_score = 0
         self.white_player_stones_eaten = 0
+        self.territory_controlled_by_white = 0
         self.update_dock_widget_ui = None
     def addUpdateUICallback(self, updateUiMethod):
         self.update_dock_widget_ui = updateUiMethod
@@ -82,8 +84,10 @@ class GameManager():
                 if liberties[i][j] == 0:
                     if not self.board_array[i][j] == 0:
                         if self.white_turn:
+                            self.white_score += 1
                             self.white_player_stones_eaten += 1
                         else:
+                            self.black_score += 1
                             self.black_player_stones_eaten += 1
                     self.board_array[i][j] = 0
         print(self.white_player_stones_eaten)
@@ -96,13 +100,15 @@ class GameManager():
                 if not liberties[i][j] == self.prev_liberties[i][j] and liberties[i][j] == 0:
                     if self.white_turn:
                         self.white_score += 1
+                        self.territory_controlled_by_white += 1
                     else:
                         self.black_score += 1
+                        self.territory_controlled_by_black += 1
 
-        self.white_score += self.white_player_stones_eaten
-        self.black_score += self.black_player_stones_eaten
         print(f"Black player score: {self.black_score}")
         print(f"White player score: {self.white_score}")
+        print(self.territory_controlled_by_black)
+        print(self.territory_controlled_by_white)
         if(self.buttonCount>0):
             self.buttonCount-=1
         print(self.buttonCount)
