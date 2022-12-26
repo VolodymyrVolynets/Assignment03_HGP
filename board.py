@@ -1,7 +1,8 @@
 from math import sqrt
 
-from PyQt5.QtWidgets import QWidget, QApplication, QFrame
+from PyQt5.QtWidgets import QWidget,QLabel ,QApplication, QFrame
 from PyQt5.QtGui import QPainter, QMouseEvent, QColor
+from PyQt5.QtGui import QPalette, QPixmap,QBrush
 from PyQt5.QtCore import Qt
 import sys, random
 
@@ -17,9 +18,16 @@ class Board(QFrame):
 
     def initUI(self):
         self.setFixedSize(Constants.BOARD_SIZE)
-        imagePath=".//woodTable.jpg"
-        # self.setStyleSheet("background-color:black;");
-        self.setStyleSheet("QFrame { background-image: url(" + imagePath + "); }")
+        # self.palette = QPalette()
+        # self.palette.setBrush(QPalette.Background, QBrush(QPixmap('grey.jpg').scaled(self.size())))
+        # self.setPalette(self.palette)
+        #
+        # label = QLabel()
+        # pixmap = QPixmap(".//school.jpg").scaled(self.size())
+        # label.setPixmap(pixmap)
+        # self.setCentralWidget(label)
+        self.setStyleSheet("background-color:green;");
+        # self.setStyleSheet("QFrame { background-image: url(" + imagePath + "); }")
         self.board_size = 7
         print(self.getCellSize())
         self.intersection = [[]]

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication,QStyleFactory,QToolBar,QComboBox,QFontDialog,QGridLayout,QDialog,QTextEdit, QWidget, QMainWindow, QFileDialog, QDockWidget, QPushButton, QVBoxLayout, QLabel, QMessageBox
 from PyQt5.QtGui import QIcon, QPainter, QPen, QPixmap
-
+from PyQt5.QtGui import QPalette, QPixmap,QBrush
 
 
 class DockWidget(QDockWidget):
@@ -18,6 +18,7 @@ class DockWidget(QDockWidget):
         self.bolTurn = self.game_manager.white_turn
         self.skipButton = QPushButton("Skip")
         self.skipButton.clicked.connect(self.updateSkipTurn)
+        self.skipButton.setStyleSheet("background-color:green;")
         self.blackScoreText = QLabel("Black Score:")
         self.whiteScoreText = QLabel("White Score:")
         self.whiteScoreLabel = QLabel("")
@@ -30,7 +31,9 @@ class DockWidget(QDockWidget):
 
     def initUI(self):
         '''initiates ScoreBoard UI'''
-
+        self.palette = QPalette()
+        self.palette.setBrush(QPalette.Background, QBrush(QPixmap('woodTable.jpg').scaled(self.size())))
+        self.setPalette(self.palette)
         self.resize(200, 400)
         self.setFixedWidth(200)
         self.setFixedSize(200,400)
