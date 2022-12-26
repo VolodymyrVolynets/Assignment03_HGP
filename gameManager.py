@@ -114,7 +114,9 @@ class GameManager():
         for i in range(0, self.board_size):
             for j in range(0, self.board_size):
                 if liberties[i][j] == 0:
-                    eaten_stones.append([i, j])
+                    if not self.board_array[i][j] == 0:
+                        eaten_stones.append([i, j])
+        print(eaten_stones)
 
         # check if the move is valid
         # if the placed stone has no liberties and no other stones are eaten, then exit
@@ -132,6 +134,7 @@ class GameManager():
                 print("Invalid move")
                 return
             else:
+                print("rjgkrjgjthijthij")
                 liberties[y][x] = 1
 
         # update score, count eaten stones and delete them
