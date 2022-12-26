@@ -35,14 +35,29 @@ class GameManager():
 
 
     def cellPressed(self, x, y):
+        liberties = np.zeros((self.board_size, self.board_size))
 
         # check if the move is valid
         if self.board_array[y][x] == 0:
             self.board_array[y][x] = 1 if self.white_turn else 2
-            if self.getLiberties(y, x) == 0:
-                self.board_array[y][x] = 0
-                print("Invalid move")
-                return
+
+            # for i in range(0, self.board_size):
+            #     for j in range(0, self.board_size):
+            #         liberties[i][j] = self.getLiberties(i, j)
+            #
+            # zeros = 0
+            # for i in range(0, self.board_size):
+            #     for j in range(0, self.board_size):
+            #         if liberties[i][j] == 0:
+            #             zeros += 1
+            #
+            # if zeros > 1:
+            #     liberties[y][x] = 1
+
+            # if self.getLiberties(y, x) == 0:
+            #     self.board_array[y][x] = 0
+            #     print("Invalid move")
+            #     return
         else:
             print("Move not valid")
             return
@@ -50,7 +65,6 @@ class GameManager():
         print(self.board_array)
 
         # get the liberties of each stone
-        liberties = np.zeros((self.board_size, self.board_size))
         for i in range(0, self.board_size):
             for j in range(0, self.board_size):
                 liberties[i][j] = self.getLiberties(i, j)
@@ -79,6 +93,48 @@ class GameManager():
         #         liberties[i][j] = 0
 
         print(liberties)
+
+        # zeros = 0
+        # for i in range(0, self.board_size):
+        #     for j in range(0, self.board_size):
+        #         if not liberties[i][j] == self.prev_liberties[i][j] and liberties[i][j] == 0:
+        #             zeros += 1
+        #
+        # print(f"Zeros {zeros}")
+        # if zeros > 0:
+        #     liberties[y][x] = 1
+        # elif zeros == 0 and liberties[y][x] == 0:
+        #     self.board_array[y][x] = 0
+        #     print("Invalid move")
+        #     return
+
+        # get the stones that should be eaten
+        eaten_stones = []
+
+        for i in range(0, self.board_size):
+            for j in range(0, self.board_size):
+                if liberties[i][j] == 0:
+                    eaten_stones.append([i, j])
+
+        # check if the move is valid
+        # if the placed stone has no liberties and no other stones are eaten, then exit
+        if [y, x] in eaten_stones and len(eaten_stones) == 1:
+            self.board_array[y][x] = 0
+            print("Invalid move")
+            return
+
+        # if the placed stone ate other stones, then continue
+        # if the placed stone kills itself and a stone of the same color, then exit
+        if [y, x] in eaten_stones:
+            eaten_stones.remove([y, x])
+            if self.board_array[y][x] in [self.board_array[s[0]][s[1]] for s in eaten_stones]:
+                self.board_array[y][x] = 0
+                print("Invalid move")
+                return
+            else:
+                liberties[y][x] = 1
+
+        # update score, count eaten stones and delete them
         for i in range(0, self.board_size):
             for j in range(0, self.board_size):
                 if liberties[i][j] == 0:
@@ -94,7 +150,7 @@ class GameManager():
         print(self.black_player_stones_eaten)
         self.update_dock_widget_ui()
 
-        # update score
+        # count the territory
         for i in range(0, self.board_size):
             for j in range(0, self.board_size):
                 if not liberties[i][j] == self.prev_liberties[i][j] and liberties[i][j] == 0:
@@ -107,8 +163,8 @@ class GameManager():
 
         print(f"Black player score: {self.black_score}")
         print(f"White player score: {self.white_score}")
-        print(self.territory_controlled_by_black)
-        print(self.territory_controlled_by_white)
+        print(f"jfdhrh {self.territory_controlled_by_black}")
+        print(f"oejfoe {self.territory_controlled_by_white}")
         if(self.buttonCount>0):
             self.buttonCount-=1
         print(self.buttonCount)
