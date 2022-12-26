@@ -17,6 +17,7 @@ class GameManager():
     def __init__(self, board_size):
         self.board_size = board_size
         self.board_array = np.zeros((self.board_size, self.board_size))
+        self.states = []
         self.prev_liberties = np.ones((self.board_size, self.board_size))
         print(self.board_array)
         self.buttonCount = 0
@@ -42,24 +43,6 @@ class GameManager():
         # check if the move is valid
         if self.board_array[y][x] == 0:
             self.board_array[y][x] = 1 if self.white_turn else 2
-
-            # for i in range(0, self.board_size):
-            #     for j in range(0, self.board_size):
-            #         liberties[i][j] = self.getLiberties(i, j)
-            #
-            # zeros = 0
-            # for i in range(0, self.board_size):
-            #     for j in range(0, self.board_size):
-            #         if liberties[i][j] == 0:
-            #             zeros += 1
-            #
-            # if zeros > 1:
-            #     liberties[y][x] = 1
-
-            # if self.getLiberties(y, x) == 0:
-            #     self.board_array[y][x] = 0
-            #     print("Invalid move")
-            #     return
         else:
             print("Move not valid")
             self.info_label = "Invalid move, the stone is already placed"
@@ -72,44 +55,7 @@ class GameManager():
             for j in range(0, self.board_size):
                 liberties[i][j] = self.getLiberties(i, j)
 
-        # chains = []
-        # print(chains)
-        #
-        # for chain in chains:
-        #     i = chain[0]
-        #     j = chain[1]
-        #     count = 0
-        #     if not j - 1 < 0:
-        #         if not self.board_array[i][j-1] == 0 and not self.board_array[i][j-1] == self.board_array[i][j]:
-        #             count += 1
-        #     if not j + 1 >= self.board_size:
-        #         if not self.board_array[i][j+1] == 0 and not self.board_array[i][j+1] == self.board_array[i][j]:
-        #             count += 1
-        #     if not i - 1 < 0:
-        #         if not self.board_array[i-1][j] == 0 and not self.board_array[i-1][j] == self.board_array[i][j]:
-        #             count += 1
-        #     if not i + 1 >= self.board_size:
-        #         if not self.board_array[i+1][j] == 0 and not self.board_array[i+1][j] == self.board_array[i][j]:
-        #             count += 1
-        #
-        #     if count == 4:
-        #         liberties[i][j] = 0
-
         print(liberties)
-
-        # zeros = 0
-        # for i in range(0, self.board_size):
-        #     for j in range(0, self.board_size):
-        #         if not liberties[i][j] == self.prev_liberties[i][j] and liberties[i][j] == 0:
-        #             zeros += 1
-        #
-        # print(f"Zeros {zeros}")
-        # if zeros > 0:
-        #     liberties[y][x] = 1
-        # elif zeros == 0 and liberties[y][x] == 0:
-        #     self.board_array[y][x] = 0
-        #     print("Invalid move")
-        #     return
 
         # get the stones that should be eaten
         eaten_stones = []
@@ -139,8 +85,18 @@ class GameManager():
                 self.info_label = "Illegal move"
                 return
             else:
-                print("rjgkrjgjthijthij")
                 liberties[y][x] = 1
+
+
+        for state in self.states:
+            if np.array_equal(state, self.board_array):
+                print("Invalid move")
+                self.board_array[y][x] = 0
+                self.info_label = "Invalid move"
+                return
+
+        self.states = []
+        self.states.append(self.board_array.copy())
 
         # update score, count eaten stones and delete them
         for i in range(0, self.board_size):
@@ -177,7 +133,6 @@ class GameManager():
             self.buttonCount-=1
         print(self.buttonCount)
         self.update_dock_widget_ui()
-
 
         self.prev_liberties = liberties
         self.white_turn = not self.white_turn
