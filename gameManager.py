@@ -30,12 +30,14 @@ class GameManager():
         self.white_player_stones_eaten = 0
         self.territory_controlled_by_white = 0
         self.update_dock_widget_ui = None
+        self.info_label = ""
     def addUpdateUICallback(self, updateUiMethod):
         self.update_dock_widget_ui = updateUiMethod
 
 
     def cellPressed(self, x, y):
         liberties = np.zeros((self.board_size, self.board_size))
+        self.info_label = ""
 
         # check if the move is valid
         if self.board_array[y][x] == 0:
@@ -60,6 +62,7 @@ class GameManager():
             #     return
         else:
             print("Move not valid")
+            self.info_label = "Invalid move, the stone is already placed"
             return
 
         print(self.board_array)
@@ -123,6 +126,7 @@ class GameManager():
         if [y, x] in eaten_stones and len(eaten_stones) == 1:
             self.board_array[y][x] = 0
             print("Invalid move")
+            self.info_label = "Illegal move"
             return
 
         # if the placed stone ate other stones, then continue
@@ -132,6 +136,7 @@ class GameManager():
             if self.board_array[y][x] in [self.board_array[s[0]][s[1]] for s in eaten_stones]:
                 self.board_array[y][x] = 0
                 print("Invalid move")
+                self.info_label = "Illegal move"
                 return
             else:
                 print("rjgkrjgjthijthij")
