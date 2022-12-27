@@ -5,6 +5,7 @@ from board import Board
 from constants import Constants
 from dockWidget import DockWidget
 from gameManager import GameManager
+from PyQt5 import QtWidgets, QtGui
 
 
 class Go(QMainWindow):
@@ -26,13 +27,21 @@ class Go(QMainWindow):
 
         self.dock_widget = DockWidget(self.game_manager)
         self.game_manager.addUpdateUICallback(self.dock_widget.initUI)
+        self.game_manager.addUpdateUIboard(self.board.update)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
 
         self.central_widget = QWidget()
         self.central_layout = QVBoxLayout()
         self.setCentralWidget(self.central_widget)
         self.central_widget.setLayout(self.central_layout)
-        # self.setStyleSheet("background-color:black;")
+        # self.playerInfo = QWidget()
+        # self.central_widget.setAutoFillBackground(True)
+        # p = QPalette()
+        # p.setColor(self.central_widget.backgroundRole(), Qt.GlobalColor.cyan)
+        # p.setBrush(QPalette.Background, QBrush(QPixmap('woodTable.jpg')))
+        # self.central_widget.setPalette(p)
+        # self.setWidget(self.central_widget)
+        self.central_widget.setStyleSheet("QWidget{background-color:#242924;}")
         # imagePath = ".//grey.jpg"
         # self.setStyleSheet(" QMainWindow{ background-image: url(" + imagePath + "); }")
 

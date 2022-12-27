@@ -26,7 +26,8 @@ class Board(QFrame):
         # pixmap = QPixmap(".//school.jpg").scaled(self.size())
         # label.setPixmap(pixmap)
         # self.setCentralWidget(label)
-        self.setStyleSheet("background-color:green;");
+
+        self.setStyleSheet("QFrame{background-color:#5DC470;}")
         # self.setStyleSheet("QFrame { background-image: url(" + imagePath + "); }")
         self.board_size = 7
         print(self.getCellSize())
@@ -59,6 +60,9 @@ class Board(QFrame):
                     break
         if nearest_index:
             self.cellPressed(nearest_index[0], nearest_index[1])
+
+    def addUpdateUICallback(self, updateUiMethod):
+        self.update_dock_widget_ui = updateUiMethod
 
     def cellPressed(self, x, y):
         self.game_manager.cellPressed(x, y)
