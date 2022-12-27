@@ -53,7 +53,7 @@ class DockWidget(QDockWidget):
         # self.palette = QPalette()
         # self.palette.setBrush(QPalette.Background, QBrush(QPixmap('woodTable.jpg').scaled(self.size())))
         # self.setPalette(self.palette)
-        self.counter = 120
+        self.counter = 10
         self.timer_display = QLabel(str(self.counter))
         self.skipButton.show()
         self.winLabel.close()
@@ -114,11 +114,9 @@ class DockWidget(QDockWidget):
         # If the counter reaches 0, stop the timer and take the appropriate action
         if self.counter == 0:
             self.skipButton.close()
-            if (self.game_manager.black_score > self.game_manager.white_score):
+            if self.bolTurn:
                 self.winLabel.setText("BLACK WINS")
-            elif (self.game_manager.black_score == self.game_manager.white_score):
-                self.winLabel.setText("EVEN")
-            elif (self.game_manager.black_score < self.game_manager.white_score):
+            else:
                 self.winLabel.setText("WHITE WINS")
             self.winLabel.show()
             self.timer.stop()
