@@ -2,8 +2,8 @@ from math import sqrt
 
 from PyQt5.QtWidgets import QWidget,QLabel ,QApplication, QFrame
 from PyQt5.QtGui import QPainter, QMouseEvent, QColor
-from PyQt5.QtGui import QPalette, QPixmap,QBrush
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPalette,QGradient, QPixmap,QBrush
+from PyQt5.QtCore import Qt,QRectF,QRect
 import sys, random
 
 from constants import Constants
@@ -27,7 +27,7 @@ class Board(QFrame):
         # label.setPixmap(pixmap)
         # self.setCentralWidget(label)
 
-        self.setStyleSheet("QFrame{background-color:#5DC470;}")
+        # self.setStyleSheet("QFrame{background-color:#5DC470;}")
         # self.setStyleSheet("QFrame { background-image: url(" + imagePath + "); }")
         self.board_size = 7
         print(self.getCellSize())
@@ -99,6 +99,26 @@ class Board(QFrame):
                 self.getCellSize() + self.getCellSize() * (self.board_size - 1),
                 self.getCellSize() + index * self.getCellSize()
                 )
+            # Set the brush color to a color of your choice
+            qp.setBrush(QColor("red"))
+
+            # Calculate the size of each cell
+            cell_size = self.getCellSize()
+
+            # Loop through all the rows and columns of the board
+            for row in range(self.board_size-1):
+                for col in range(self.board_size-1):
+                    # Calculate the x and y coordinates of the top left corner of the cell
+                    x = self.getCellSize() + col * cell_size
+                    y = self.getCellSize() + row * cell_size
+
+                    # Use the fillRect method to draw a filled rectangle at the calculated coordinates
+                    rect = QRectF(x, y, cell_size, cell_size)
+                    if (row + col) % 2 == 0:
+                        qp.setBrush(QColor("#6B8F45"))
+                    else:
+                        qp.setBrush(QColor("#DFC8A8"))
+                    qp.fillRect(rect, qp.brush())
     def getCellSize(self):
         return int(self.size().width() / (self.board_size + 1))
 

@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QStyleFactory,QToolBar,QComboBox,QFontDialog,QGridLayout,QDialog,QTextEdit, QWidget, QMainWindow, QFileDialog, QDockWidget, QPushButton, QLabel, QMessageBox
-from PyQt5.QtGui import QIcon, QPainter, QPen, QPixmap
+from PyQt5.QtWidgets import QGridLayout,QDialog, QWidget, QMainWindow, QFileDialog, QDockWidget, QPushButton, QLabel, QMessageBox
+from PyQt5.QtGui import QOpenGLTimerQuery, QPainter, QPen, QPixmap
 from PyQt5.QtGui import QPalette, QPixmap,QBrush
+from PyQt5.QtCore import QTimer
 
 
 class DockWidget(QDockWidget):
@@ -9,9 +10,14 @@ class DockWidget(QDockWidget):
     """
     def __init__(self, game_manager):
         super().__init__()
+        self.setStyleSheet("* {font-family: Areal; font-size: 16pt; font-weight: bold;color:white;}")
+        # self.setStyleSheet("color: white;")
         self.game_manager = game_manager
         self.playerInfo = QWidget()
-        self.playerInfo.setStyleSheet("QWidget{background-color:#5DC470;}")
+        self.timer = QTimer()
+        self.timer.setInterval(1000)  # Set the interval to 1 second
+        self.timer.timeout.connect(self.on_timeout)
+        self.playerInfo.setStyleSheet("QWidget{background-color:#314532;}")
         self.layout = QGridLayout()
         self.black_score= self.game_manager.black_score
         self.turnLabel = QLabel("")
@@ -21,8 +27,8 @@ class DockWidget(QDockWidget):
         self.skipButton.clicked.connect(self.updateSkipTurn)
         self.rulesButton = QPushButton("Rules")
         self.rulesButton.clicked.connect(self.goRulesDialog)
-        self.skipButton.setStyleSheet("background-color:green;")
-        self.rulesButton.setStyleSheet("background-color:green;")
+        self.skipButton.setStyleSheet("background-color:#6B8F45;")
+        self.rulesButton.setStyleSheet("background-color:#6B8F45;")
         self.blackScoreText = QLabel("Black Score:")
         self.whiteScoreText = QLabel("White Score:")
         self.whiteScoreLabel = QLabel("")
@@ -37,7 +43,7 @@ class DockWidget(QDockWidget):
         self.blackTerritoryLabel = QLabel("")
         self.restartButton = QPushButton("Restart")
         self.restartButton.clicked.connect(self.restartGame)
-        self.restartButton.setStyleSheet("background-color:green;")
+        self.restartButton.setStyleSheet("background-color:#6B8F45;")
         self.winLabel = QLabel("")
         self.initUI()
 
@@ -47,6 +53,8 @@ class DockWidget(QDockWidget):
         # self.palette = QPalette()
         # self.palette.setBrush(QPalette.Background, QBrush(QPixmap('woodTable.jpg').scaled(self.size())))
         # self.setPalette(self.palette)
+        self.counter = 120
+        self.timer_display = QLabel(str(self.counter))
         self.skipButton.show()
         self.winLabel.close()
         self.resize(200, 900)
@@ -76,10 +84,12 @@ class DockWidget(QDockWidget):
         self.layout.addWidget(self.restartButton, 18, 1)
         self.layout.addWidget(QLabel(""), 19, 1)
         self.layout.addWidget(self.rulesButton,20,1)
+        self.layout.addWidget(self.timer_display,21,1)
         self.playerInfo.setLayout(self.layout)
         self.setWidget(self.playerInfo)
         self.updateErrorMessage()
         if(self.error_message_value==""):
+            self.start_timer()
             self.updateTurn()
             self.updateWhiteStones()
             self.updateBlackStones()
@@ -87,6 +97,32 @@ class DockWidget(QDockWidget):
             self.updateWhiteScore()
             self.updateWhiteTerritory()
             self.updateBlackTerritory()
+
+    def start_timer(self):
+        # Reset the counter to 120 (two minutes)
+
+        # Start the timer
+        self.timer.start()
+
+    def on_timeout(self):
+        # Decrement the counter by 1
+        self.counter -= 1
+
+        # Update the timer display
+        self.timer_display.setText(str(self.counter))
+
+        # If the counter reaches 0, stop the timer and take the appropriate action
+        if self.counter == 0:
+            self.skipButton.close()
+            if (self.game_manager.black_score > self.game_manager.white_score):
+                self.winLabel.setText("BLACK WINS")
+            elif (self.game_manager.black_score == self.game_manager.white_score):
+                self.winLabel.setText("EVEN")
+            elif (self.game_manager.black_score < self.game_manager.white_score):
+                self.winLabel.setText("WHITE WINS")
+            self.winLabel.show()
+            self.timer.stop()
+
     def updateTurn(self):
         self.bolTurn = self.game_manager.white_turn
         print(self.bolTurn)
@@ -128,6 +164,7 @@ class DockWidget(QDockWidget):
         self.blackStonesEatenLabel.setText(str(self.blackEaten))
     def updateErrorMessage(self):
         self.error_message_value = self.game_manager.error_message
+        self.timer.stop()
         print("error"+str(self.error_message_value))
         self.error_message_label.setText(str(self.error_message_value))
     def updateBlackTerritory(self):
@@ -137,11 +174,13 @@ class DockWidget(QDockWidget):
         self.whiteTerritoryLabel.setText(str(self.game_manager.territory_controlled_by_white))
     def goRulesDialog(self):
         self.dialogRules = QDialog()
+        self.dialogRules.setStyleSheet("* {font-family: Areal; font-size: 16pt; font-weight: bold;color:white;background-color:#314532;}")
         self.rulesLayout = QGridLayout(self.dialogRules)
         self.rulesLabel = QLabel("A game of Go starts with an empty board.\n "
                                  "Each player has an effectively unlimited supply of pieces (called stones), one taking the black stones, the other taking white.\n"
                                  "The main object of the game is to use your stones to form territories by surrounding vacant areas of the board.\n "
-                                 "It is also possible to capture your opponent's stones by completely surrounding them.Players take turns, placing one of their stones on a vacant point at each turn, with Black playing first.\n"
+                                 "It is also possible to capture your opponent's stones by completely surrounding them.\n"
+                                 "Players take turns, placing one of their stones on a vacant point at each turn, with Black playing first.\n"
                                  "Note that stones are placed on the intersections of the lines rather than in the squares and once played stones are not moved.\n"
                                  "However they may be captured, in which case they are removed from the board, and kept by the capturing player as prisoners.")
         self.rulesLayout.addWidget(self.rulesLabel)
