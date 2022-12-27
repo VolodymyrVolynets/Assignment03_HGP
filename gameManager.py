@@ -139,10 +139,10 @@ class GameManager():
         if(self.buttonCount>0):
             self.buttonCount-=1
         print(self.buttonCount)
-        self.update_dock_widget_ui()
 
         self.prev_liberties = liberties
         self.white_turn = not self.white_turn
+        self.update_dock_widget_ui()
 
     def getLiberties(self, i, j):
         count = 0

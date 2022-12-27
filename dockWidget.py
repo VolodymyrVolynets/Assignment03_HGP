@@ -90,7 +90,7 @@ class DockWidget(QDockWidget):
     def updateTurn(self):
         self.bolTurn = self.game_manager.white_turn
         print(self.bolTurn)
-        if not self.bolTurn:
+        if self.bolTurn:
             self.turnLabel.setText("WHITE PLAYER TURN")
 
         else:
